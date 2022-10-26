@@ -15,17 +15,23 @@ public class Reservoir {
         items.sort(Comparator.comparing(Item::getHeight).reversed());
 
         int currentMaxVolume = 0;
+        int absoluteMaxVolumePotential;
         int maxVolumePotential;
         for (int leftBorder = 0; leftBorder < items.size() - 1; leftBorder++) {
             Item biggerItem = items.get(leftBorder);
-            maxVolumePotential = biggerItem.getHeight() * items.size();
+            int maxDistance = Math.max(biggerItem.getPosition(), items.size() - 1 - biggerItem.getPosition());
+            maxVolumePotential = biggerItem.getHeight() * maxDistance;
             if (maxVolumePotential <= currentMaxVolume) {
+                continue;
+            }
+            absoluteMaxVolumePotential = biggerItem.getHeight() * items.size();
+            if (absoluteMaxVolumePotential <= currentMaxVolume) {
                 return currentMaxVolume;
             }
             for (int rightBorder = leftBorder + 1; rightBorder < items.size(); rightBorder++) {
 
                 Item smallerItem = items.get(rightBorder);
-                maxVolumePotential = smallerItem.getHeight() * items.size();
+                maxVolumePotential = smallerItem.getHeight() * maxDistance;
                 if (maxVolumePotential <= currentMaxVolume) {
                     break;
                 }
