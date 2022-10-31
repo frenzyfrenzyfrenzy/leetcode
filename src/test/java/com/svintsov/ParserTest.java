@@ -28,4 +28,12 @@ class ParserTest {
         result.forEach(System.out::println);
     }
 
+    @Test
+    public void testParseToPostfix_1() {
+        List<String> parsed = parser.parseString("(123*345-12)+4325+(12/5)^6^7");
+        List<Element> typed = parser.parseToTyped(parsed);
+        List<Element> result = parser.parseToPostfix(typed);
+        result.forEach(System.out::println);
+    }
+
 }

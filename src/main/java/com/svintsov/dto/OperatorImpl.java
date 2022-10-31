@@ -32,6 +32,9 @@ public enum OperatorImpl implements Operator {
                 .findFirst();
     }
 
+    public boolean isBracket() {
+        return this.equals(LB) || this.equals(RB);
+    }
 
     @Override
     public String toString() {

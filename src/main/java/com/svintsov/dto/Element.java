@@ -1,6 +1,5 @@
 package com.svintsov.dto;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import lombok.AccessLevel;
@@ -11,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Element {
 
-    private final Operator operator;
+    private final OperatorImpl operator;
     private final Integer number;
 
-    public static Element operator(Operator operator) {
+    public static Element operator(OperatorImpl operator) {
         return new Element(operator, null);
     }
 

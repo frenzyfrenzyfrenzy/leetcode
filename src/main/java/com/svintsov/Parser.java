@@ -1,7 +1,9 @@
 package com.svintsov;
 
+import static com.svintsov.dto.Associativity.LEFT;
 import static java.lang.Integer.valueOf;
 
+import com.svintsov.dto.Associativity;
 import com.svintsov.dto.Element;
 import com.svintsov.dto.Operator;
 import com.svintsov.dto.OperatorImpl;
@@ -50,5 +52,47 @@ public class Parser {
                 .collect(Collectors.toList());
     }
 
+    public List<Element> parseToPostfix(List<Element> input) {
+        List<Element> result = new ArrayList<>();
+        Stack<OperatorImpl> operatorStack = new Stack<>();
+        input.forEach(currentElement -> {
+            if (currentElement.isNumber()) {
+                result.add(currentElement);
+            } else {
+                OperatorImpl currentOperator = currentElement.getOperator();
+                if (OperatorImpl.LB == currentOperator) {
+                    operatorStack.push(currentOperator);
+                    return;
+                }
+                if (OperatorImpl.RB == currentOperator) {
+                    while (!operatorStack.isEmpty()) {
+                        OperatorImpl remainingOperator = operatorStack.pop();
+                        if (remainingOperator.equals(OperatorImpl.LB)) {
+                            break;
+                        }
+                        result.add(Element.operator(remainingOperator));
+                    }
+                    return;
+                }
+                while (!operatorStack.isEmpty()) {
+                    OperatorImpl previousOperator = operatorStack.peek();
+                    if (previousOperator.isBracket()) {
+                        break;
+                    } else if ((currentOperator.getPrecedence() < previousOperator.getPrecedence()) ||
+                            (currentOperator.getPrecedence().equals(previousOperator.getPrecedence()) && currentOperator.getAssociativity().equals(LEFT))) {
+                        result.add(Element.operator(operatorStack.pop()));
+                    } else {
+                        break;
+                    }
+                }
+                operatorStack.push(currentOperator);
+            }
+        });
+        while (!operatorStack.isEmpty()) {
+            OperatorImpl remainingOperator = operatorStack.pop();
+            result.add(Element.operator(remainingOperator));
+        }
+        return result;
+    }
 }
 
