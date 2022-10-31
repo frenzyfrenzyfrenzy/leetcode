@@ -8,5 +8,4 @@ public class Calculator {
         parser = new Parser();
     }
 
-
 }
