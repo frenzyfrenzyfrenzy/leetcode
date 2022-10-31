@@ -1,43 +1,57 @@
 package com.svintsov;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class NewCombinator {
 
     public List<List<Integer>> combinationSum2(int[] input, int sum) {
-        List<List<Integer>> decompositionByPosition = decomposeInternal(input, 0, sum);
-        return decompositionByPosition.stream()
-                .map(decomposition -> decomposition.stream().map(position -> input[position]).sorted().collect(Collectors.toList()))
-                .distinct()
-                .collect(Collectors.toList());
+        input = Arrays.stream(input).filter(value -> value <= sum).toArray();
+        Arrays.sort(input);
+        int total = Arrays.stream(input).sum();
+        if (total < sum) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(decomposeInternal(input, 0, sum));
     }
 
-    private List<List<Integer>> decomposeInternal(int[] input, int startingFrom, int sum) {
+    private Set<List<Integer>> decomposeInternal(int[] input, int startingFrom, int sum) {
+
         if (sum < 0) {
-            return List.of();
+            return new HashSet<>();
         }
+
+        Set<List<Integer>> result = new HashSet<>();
+
         if (startingFrom == input.length - 1 && input[input.length - 1] == sum) {
-            return List.of(List.of(input.length - 1));
+            List<Integer> e = new ArrayList<>();
+            e.add(input[input.length - 1]);
+            result.add(e);
+            return result;
         }
-        List<List<Integer>> result = new ArrayList<>();
+
         for (int i = startingFrom; i < input.length; i++) {
-            if (sum == input[i]) {
-                result.add(List.of(i));
+            int inputAtI = input[i];
+            if (sum == inputAtI) {
+                List<Integer> e = new ArrayList<>();
+                e.add(inputAtI);
+                result.add(e);
             } else {
-                List<List<Integer>> nextDecompositions = decomposeInternal(input, i + 1, sum - input[i]);
-                result.addAll(combine(i, nextDecompositions));
+                Set<List<Integer>> nextDecompositions = decomposeInternal(input, i + 1, sum - inputAtI);
+                result.addAll(combine(inputAtI, nextDecompositions));
             }
         }
+
         return result;
     }
 
-    private List<List<Integer>> combine(int number, List<List<Integer>> decompositions) {
-        return decompositions.stream()
-                .map(ArrayList::new)
-                .peek(decomposition -> decomposition.add(number))
-                .collect(Collectors.toList());
+    private Set<List<Integer>> combine(int number, Set<List<Integer>> decompositions) {
+        decompositions.forEach(integers -> integers.add(number));
+        return decompositions;
     }
 
 }

@@ -1,32 +1,34 @@
 package com.svintsov;
 
-import static java.util.regex.Pattern.compile;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Parser {
 
+    private static final Pattern startOfElementPattern = Pattern.compile("[\\d\\(\\)+\\-\\^*/]");
+    private static final Pattern numberPattern = Pattern.compile("\\d+");
+
     public List<String> parse(String input) {
-        List<String> parsed  = new ArrayList<>();
-        Matcher nextCharacterMatcher = compile("[\\d\\(\\)+\\-\\*/]").matcher(input);
-        Matcher numberMatcher = compile("\\d+").matcher(input);
-        int startSearchAt = 0;
-        while (nextCharacterMatcher.find(startSearchAt)) {
-            String found = nextCharacterMatcher.group();
+        input = input.replaceAll("\\s", "");
+        Matcher startOfElementMatcher = startOfElementPattern.matcher(input);
+        Matcher numberMatcher = numberPattern.matcher(input);
+        int startFrom = 0;
+        List<String> result = new ArrayList<>();
+        while (startOfElementMatcher.find(startFrom)) {
+            String found = startOfElementMatcher.group();
             if (found.matches("\\d")) {
-                if (!numberMatcher.find(nextCharacterMatcher.start())) {
-                    throw new IllegalArgumentException();
-                }
-                parsed.add(numberMatcher.group());
-                startSearchAt = numberMatcher.end();
+                numberMatcher.find(startOfElementMatcher.start());
+                String foundNumber = numberMatcher.group();
+                result.add(foundNumber);
+                startFrom = numberMatcher.end();
             } else {
-                parsed.add(found);
-                startSearchAt = nextCharacterMatcher.end();
+                result.add(found);
+                startFrom = startOfElementMatcher.end();
             }
         }
-        return parsed;
+        return result;
     }
 
 }

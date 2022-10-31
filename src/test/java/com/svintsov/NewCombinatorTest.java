@@ -16,7 +16,7 @@ class NewCombinatorTest {
 
     @Test
     public void testDecomposition_1() {
-        List<List<Integer>> result = newCombinator.combinationSum2(new int[]{10, 1, 2, 7, 6, 1, 5}, 8);
+        List<List<Integer>> result = newCombinator.combinationSum2(new int[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 27);
         result.forEach(System.out::println);
     }
 
