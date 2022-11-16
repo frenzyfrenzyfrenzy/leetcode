@@ -1,6 +1,6 @@
 package com.svintsov;
 
-public class Reverser {
+public class IntegerReverter {
 
     private static final int base = 10;
 

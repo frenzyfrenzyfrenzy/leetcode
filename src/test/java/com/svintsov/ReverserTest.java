@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 class ReverserTest {
 
-    private Reverser reverser;
+    private IntegerReverter reverser;
 
     @BeforeEach
     public void beforeEach() {
-        reverser = new Reverser();
+        reverser = new IntegerReverter();
     }
 
     @Test
