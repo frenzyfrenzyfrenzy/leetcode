@@ -1,7 +1,5 @@
 package com.svintsov.revertlist;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +15,20 @@ class ListReverterTest {
     }
 
     @Test
-    public void setListReverterTest() {
+    public void listReverterTest() {
         Node<Integer> head = Node.fromList(List.of(1, 2, 3, 4));
         Node.print(head);
         System.out.println("----------");
         Node<Integer> revertedHead = listReverter.revert(head);
+        Node.print(revertedHead);
+    }
+
+    @Test
+    public void recursiveListReverterTest() {
+        Node<Integer> head = Node.fromList(List.of(1, 2, 3, 4));
+        Node.print(head);
+        System.out.println("----------");
+        Node<Integer> revertedHead = listReverter.revertRecursive(head);
         Node.print(revertedHead);
     }
 
