@@ -1,65 +1,67 @@
 package com.svintsov;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import static com.google.common.collect.Sets.newHashSet;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+@Slf4j
 class CombinationSum {
 
-    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
-        // container to hold the final combinations
-        List<List<Integer>> results = new ArrayList<>();
-        LinkedList<Integer> comb = new LinkedList<>();
-
-        HashMap<Integer, Integer> counter = new HashMap<>();
-        for (int candidate : candidates) {
-            if (counter.containsKey(candidate))
-                counter.put(candidate, counter.get(candidate) + 1);
-            else
-                counter.put(candidate, 1);
-        }
-
-        // convert the counter table to a list of (num, count) tuples
-        List<int[]> counterList = new ArrayList<>();
-        counter.forEach((key, value) -> {
-            counterList.add(new int[]{key, value});
-        });
-
-        backtrack(comb, target, 0, counterList, results);
-        return results;
+    public Set<Set<Integer>> combinationSum(List<Integer> terms, Integer sum) {
+        List<Integer> indexes = IntStream.range(0, terms.size()).boxed().collect(Collectors.toList());
+        return getPossibleCombinations(terms, indexes, sum);
     }
 
-    private void backtrack(LinkedList<Integer> comb,
-                           int remain, int curr,
-                           List<int[]> counter,
-                           List<List<Integer>> results) {
+    private Set<Set<Integer>> getPossibleCombinations(List<Integer> terms, List<Integer> indexesToConsider, Integer sum) {
 
-        if (remain <= 0) {
-            if (remain == 0) {
-                // make a deep copy of the current combination.
-                results.add(new ArrayList<Integer>(comb));
+        log.debug("Getting possible combinations for terms: {}, indexes to consider: {}, sum: {}", terms, indexesToConsider, sum);
+
+        if (sum < 0 || indexesToConsider.isEmpty()) {
+            log.debug("Sum {} is less then zero or no indexes left to consider, so no combinations can be made", sum);
+            return newHashSet();
+        }
+
+        Set<Set<Integer>> newCombinations = newHashSet();
+        if (indexesToConsider.size() == 1) {
+            if (sum.equals(terms.get(indexesToConsider.get(0)))) {
+                newCombinations.add(newHashSet(indexesToConsider.get(0)));
             }
-            return;
+            return newCombinations;
         }
 
-        for (int nextCurr = curr; nextCurr < counter.size(); ++nextCurr) {
-            int[] entry = counter.get(nextCurr);
-            Integer candidate = entry[0], freq = entry[1];
-
-            if (freq <= 0)
+        for (int indexOfIndexToConsider = 0; indexOfIndexToConsider < indexesToConsider.size(); indexOfIndexToConsider++) {
+            Set<Set<Integer>> combinationsForIteration = newHashSet();
+            int nextSum = sum - terms.get(indexesToConsider.get(indexOfIndexToConsider));
+            if (nextSum == 0) {
+                combinationsForIteration.add(newHashSet(indexesToConsider.get(indexOfIndexToConsider)));
+                newCombinations.addAll(combinationsForIteration);
                 continue;
+            }
 
-            // add a new element to the current combination
-            comb.addLast(candidate);
-            counter.set(nextCurr, new int[]{candidate, freq - 1});
-
-            // continue the exploration with the updated combination
-            backtrack(comb, remain - candidate, nextCurr, counter, results);
-
-            // backtrack the changes, so that we can try another candidate
-            counter.set(nextCurr, new int[]{candidate, freq});
-            comb.removeLast();
+            boolean isBeforeLastElement = indexOfIndexToConsider == indexesToConsider.size() - 2;
+            List<Integer> nextIndexesOfTerms;
+            if (isBeforeLastElement) {
+                nextIndexesOfTerms = indexesToConsider.subList(indexesToConsider.size() - 1, indexesToConsider.size());
+            } else {
+                nextIndexesOfTerms = indexesToConsider.subList(indexOfIndexToConsider + 1, indexesToConsider.size());
+            }
+            Set<Set<Integer>> possibleCombinations = getPossibleCombinations(terms, nextIndexesOfTerms, nextSum);
+            Integer indexToConsider = indexesToConsider.get(indexOfIndexToConsider);
+            combinationsForIteration = combine(indexToConsider, possibleCombinations);
+            newCombinations.addAll(combinationsForIteration);
         }
+
+        return newCombinations;
     }
+
+    private Set<Set<Integer>> combine(Integer newIndex, Set<Set<Integer>> existingCombinations) {
+        existingCombinations.forEach(combination -> combination.add(newIndex));
+        return existingCombinations;
+    }
+
 }
