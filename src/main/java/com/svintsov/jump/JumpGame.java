@@ -5,36 +5,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JumpGame {
 
-    private int smallestAmountOfJumps = 0;
-
     public int jump(int[] nums) {
-        smallestAmountOfJumps = nums.length - 1;
-        jumpNext(0, 0, nums);
-        return smallestAmountOfJumps;
-    }
 
-    private void jumpNext(int currentJumps, int currentPad, int[] jumpPads) {
+        int current = 0;
+        int currentFurthestPossible = Math.min(nums[0], nums.length - 1);
+        int next = currentFurthestPossible;
+        int nextAfterNextCandidate = next + Math.min(nums[next], nums.length - 1);
+        int jumps = 0;
 
-        if (smallestAmountOfJumps==1) {
-            return;
+        if (nums.length == 1) {
+            return 0;
         }
 
-        if (currentJumps >= smallestAmountOfJumps) {
-            return;
-        }
-
-        if (currentPad==jumpPads.length - 1) {
-            smallestAmountOfJumps = currentJumps;
-        } else {
-            int jumpDistance = jumpPads[currentPad];
-            if (jumpDistance > 0) {
-                int nextLimit = Math.min(currentPad + jumpDistance, jumpPads.length - 1);
-                for (int nextPad = nextLimit; nextPad >= currentPad + 1; nextPad--) {
-                    jumpNext(currentJumps + 1, nextPad, jumpPads);
-                }
+        for (int i = 1; i < nums.length; ++i) {
+            if (Math.min(i + nums[i], nums.length - 1) > nextAfterNextCandidate) {
+                nextAfterNextCandidate = Math.min(i + nums[i], nums.length - 1);
+                next = i;
+            }
+            if (i==currentFurthestPossible) {
+                current = next;
+                jumps++;
+                nextAfterNextCandidate = Math.min(current + nums[current], nums.length - 1);
+                currentFurthestPossible = nextAfterNextCandidate;
+                next = nextAfterNextCandidate;
             }
         }
 
+        return jumps;
     }
 
 }
