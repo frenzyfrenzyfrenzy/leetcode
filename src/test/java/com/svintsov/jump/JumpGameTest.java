@@ -8,7 +8,7 @@ class JumpGameTest {
 
     @Test
     public void test() {
-        int jumps = new JumpGame().jump(new int[]{2,1});
+        int jumps = new JumpGame().jump(new int[]{2,3,1,1,4});
         log.info("jumps: {}", jumps);
     }
 
