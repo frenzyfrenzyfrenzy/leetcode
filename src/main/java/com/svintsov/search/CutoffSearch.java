@@ -1,74 +1,50 @@
 package com.svintsov.search;
 
-import static java.util.Objects.isNull;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Value;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-@SuppressWarnings("DuplicatedCode")
 public class CutoffSearch {
 
-    public int searchGreaterOrEqualCount(int[] input, int cutoff) {
+    public int countGreaterOrEqual(int[] input, int value) {
+        int position = findPosition(input, value);
+        return input.length - position;
+    }
 
-        if (isNull(input) || input.length == 0) {
+    private int findPosition(int[] input, int valueToFind) {
+        if (input.length==0) {
             return 0;
         }
-
-        List<Integer> list = Arrays.stream(input).boxed().collect(Collectors.toList());
-
-        return searchGreaterOrEqualCountInternal(list, cutoff);
+        return findPosition(input, 0, input.length - 1, valueToFind);
     }
 
-    private int searchGreaterOrEqualCountInternal(List<Integer> input, int desired) {
-        BinarySearchResult searchResult = binarySearch(0, input.size() - 1, input, desired);
-        if (!searchResult.isExact()) {
-            int closestPosition = searchResult.getPosition();
-            int closestValue = input.get(closestPosition);
-            if (closestValue < desired) {
-                return input.size();
-            } else {
-                return input.size() - closestPosition;
+    private int findPosition(int[] array, int startPosition, int endPosition, int valueToFind) {
+        int positionToCheck = startPosition + (endPosition - startPosition) / 2;
+        if (array[positionToCheck]==valueToFind) {
+            if (positionToCheck==0) {
+                return positionToCheck;
             }
+            return findLowestPosition(array, 0, positionToCheck, valueToFind);
         }
-        throw new UnsupportedOperationException();
-    }
-
-    private BinarySearchResult binarySearch(int searchZoneStart, int searchZoneEnd, List<Integer> input, int desired) {
-        int searchZoneSize = searchZoneEnd - searchZoneStart + 1;
-        int nextPositionToCheck;
-        if (searchZoneSize % 2 == 0) {
-            nextPositionToCheck = searchZoneStart + (searchZoneSize / 2 - 1);
-        } else {
-            nextPositionToCheck = searchZoneStart + (searchZoneSize / 2);
+        if (startPosition==endPosition) {
+            return positionToCheck;
         }
-        Integer valueToCheck = input.get(nextPositionToCheck);
-        if (valueToCheck == desired) {
-            return BinarySearchResult.of(nextPositionToCheck, true);
-        }
-        if (searchZoneSize == 1) {
-            return BinarySearchResult.of(nextPositionToCheck, false);
-        }
-        if (valueToCheck < desired) {
-            return binarySearch(nextPositionToCheck + 1, searchZoneEnd, input, desired);
-        } else {
-            if (nextPositionToCheck == searchZoneStart) {
-                return BinarySearchResult.of(nextPositionToCheck, false);
+        if (array[positionToCheck] > valueToFind) {
+            if (positionToCheck==0) {
+                return positionToCheck;
             }
-            return binarySearch(searchZoneStart, nextPositionToCheck - 1, input, desired);
+            return findPosition(array, startPosition, positionToCheck - 1, valueToFind);
+        } else {
+            return findPosition(array, positionToCheck + 1, endPosition, valueToFind);
         }
     }
 
-    @Value
-    @Getter
-    @AllArgsConstructor(staticName = "of")
-    private static class BinarySearchResult {
-        int position;
-        boolean exact;
+    private int findLowestPosition(int[] array, int startPosition, int endPosition, int value) {
+        if (startPosition==endPosition) {
+            return startPosition;
+        }
+        int positionToCheck = startPosition + (endPosition - startPosition) / 2;
+        if (array[positionToCheck]==value) {
+            return findLowestPosition(array, startPosition, positionToCheck, value);
+        } else {
+            return findLowestPosition(array, startPosition + 1, endPosition, value);
+        }
     }
 
 }
