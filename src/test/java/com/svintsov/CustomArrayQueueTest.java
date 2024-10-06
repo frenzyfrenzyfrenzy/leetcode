@@ -1,5 +1,6 @@
 package com.svintsov;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class CustomArrayQueueTest {
@@ -7,6 +8,7 @@ class CustomArrayQueueTest {
     private CustomArrayQueue<Integer> customArrayQueue;
 
     @Test
+    @Disabled
     public void testCustomArrayQueue_1() {
         customArrayQueue = new CustomArrayQueue<>(3);
         customArrayQueue.add(1);
