@@ -17,10 +17,9 @@ class HeatersTest {
 
     @Test
     void test() {
-        int[] houses = new int[]{1, 2, 3, 5, 15};
-        int[] heaters = new int[]{2, 30};
-        int radius = solution.findRadius(houses, heaters);
-        log.info("radius: {}", radius);
+        int[] houses = new int[]{474833169,264817709,998097157,817129560};
+        int[] heaters = new int[]{197493099,404280278,893351816,505795335};
+        log.info("{}", solution.findRadius(houses, heaters));
     }
 
 }
